@@ -22,11 +22,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           fontFamily: "Gellix",
           primaryColor: Color(0xff742DDD),
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
               headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
               headline6:
                   TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold)),
-          textSelectionTheme: TextSelectionThemeData(
+          textSelectionTheme: const TextSelectionThemeData(
             cursorColor: Color(0xff732cdd),
             selectionHandleColor: Color(0xff732cdd),
             selectionColor: Color(0xffD1BAF4),

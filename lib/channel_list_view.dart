@@ -3,6 +3,8 @@ import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'group_channel_view.dart';
 
 class ChannelListView extends StatefulWidget {
+  const ChannelListView({Key? key}) : super(key: key);
+
   @override
   _ChannelListViewState createState() => _ChannelListViewState();
 }

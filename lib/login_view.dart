@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
-import 'package:uuid/uuid.dart';
-
 
 class LoginView extends StatefulWidget {
   @override
@@ -11,8 +9,9 @@ class LoginView extends StatefulWidget {
 
 class LoginViewState extends State<LoginView> {
   final _appIdController =
-      TextEditingController(text: "");
+      TextEditingController(text: "FD1AB5F7-2473-45A1-A9F1-0F28B7E359A3");
   final _userIdController = TextEditingController();
+  final _nicknameController = TextEditingController(text: '');
   bool _enableSignInButton = false;
 
   @override
@@ -29,15 +28,15 @@ class LoginViewState extends State<LoginView> {
       elevation: 0,
       backgroundColor: Colors.white,
       automaticallyImplyLeading: true,
-      title: Text('Chat demo sendbird', style: TextStyle(color: Colors.black)),
-      actions: [],
+      title: const Text('Chat demo sendbird',
+          style: TextStyle(color: Colors.black)),
       centerTitle: true,
     );
   }
 
   Widget body(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 100),
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 100),
         child: Column(
           children: [
             const SizedBox(height: 20),
@@ -60,7 +59,7 @@ class LoginViewState extends State<LoginView> {
                     onPressed: () {
                       _appIdController.clear();
                     },
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
                   )),
             ),
             const SizedBox(height: 10),
@@ -73,14 +72,34 @@ class LoginViewState extends State<LoginView> {
               },
               decoration: InputDecoration(
                   border: InputBorder.none,
-                  labelText: 'Your nickname',
+                  labelText: 'Your userId',
                   filled: true,
                   fillColor: Colors.grey[200],
                   suffixIcon: IconButton(
                     onPressed: () {
                       _userIdController.clear();
                     },
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
+                  )),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _nicknameController,
+              onChanged: (value) {
+                setState(() {
+                  _enableSignInButton = _shouldEnableSignInButton();
+                });
+              },
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Your nickname',
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _nicknameController.clear();
+                    },
+                    icon: const Icon(Icons.clear),
                   )),
             ),
             const SizedBox(height: 30),
@@ -99,6 +118,9 @@ class LoginViewState extends State<LoginView> {
     if (_userIdController.text.isEmpty) {
       return false;
     }
+    if (_nicknameController.text.isEmpty) {
+      return false;
+    }
     return true;
   }
 
@@ -111,7 +133,7 @@ class LoginViewState extends State<LoginView> {
             foregroundColor:
                 MaterialStateProperty.all<Color>(Colors.grey.shade300)),
         onPressed: () {},
-        child: Text(
+        child: const Text(
           "Sign In",
           style: TextStyle(fontSize: 20.0),
         ),
@@ -123,30 +145,28 @@ class LoginViewState extends State<LoginView> {
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white)),
       onPressed: () {
         // Login with Sendbird
-        connect(_appIdController.text, _userIdController.text).then((user) {
+        connect(_appIdController.text, _userIdController.text, _nicknameController.text).then((user) {
           Navigator.pushNamed(context, '/channel_list');
         }).catchError((error) {
           print('login_view: _signInButton: ERROR: $error');
         });
       },
-      child: Text(
+      child: const Text(
         "Sign In",
         style: TextStyle(fontSize: 20.0),
       ),
     );
   }
 
-  Future<User> connect(String appId, String userId) async {
+  Future<User> connect(String appId, String userId, String nickname) async {
     // Init Sendbird SDK and connect with current user id
     try {
-      final sendbird =
-          SendbirdSdk(appId: appId);
-      final user = await sendbird.connect(
-      Uuid().v4(), nickname: userId);
+      final sendbird = SendbirdSdk(appId: appId);
+      final user = await sendbird.connect(userId, nickname: nickname);
       return user;
     } catch (e) {
       print('login_view: connect: ERROR: $e');
-      throw e;
+      rethrow;
     }
   }
 }
